@@ -266,14 +266,14 @@ namespace Org.XmlUnit.Constraints {
                 return new TestCompareConstraintWrapper(CompareConstraint.IsSimilarTo(control));
             }
 
-            public override bool Matches(object testItem) {
+            public override ConstraintResult ApplyTo<TActual>(TActual actual) {
                 if (fileName == null) {
-                    return compareMatcher.Matches(testItem);
+                    return compareMatcher.ApplyTo(actual);
                 }
                 // do something with your Test-Source
-                var builder = InputBuilder.From(testItem);
+                var builder = InputBuilder.From(actual);
                 string testFile = WriteIntoTestResultFolder(builder.Build());
-                return compareMatcher.Matches(InputBuilder.FromFile(testFile));
+                return compareMatcher.ApplyTo(InputBuilder.FromFile(testFile));
             }
 
             private string WriteIntoTestResultFolder(ISource source) {
@@ -288,15 +288,6 @@ namespace Org.XmlUnit.Constraints {
                 XmlDocument doc = UtilConvert.ToDocument(source);
                 doc.WriteTo(new XmlTextWriter(fop));
             }
-
-            public override void WriteDescriptionTo(MessageWriter writer) {
-                compareMatcher.WriteDescriptionTo(writer);
-            }
-
-            public override void WriteMessageTo(MessageWriter writer) {
-                compareMatcher.WriteMessageTo(writer);
-            }
         }
-
     }
 }
